@@ -33,6 +33,15 @@ def movie_list_api_view(request):
 
 
 @api_view(['GET'])
+def movie_review_list_api_view(request):
+    try:
+        movies = models.Movie.objects.all()
+    except models.Movie.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    data = serializers.MovieSerializer(movies, many=True).data
+    return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
 def movie_detail_api_view(request, movie_id):
     try:
         movie = models.Movie.get(id=movie_id)

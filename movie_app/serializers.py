@@ -67,5 +67,5 @@ class MovieReviewSerializer(serializers.ModelSerializer):
 class MovieValidateSerializer(serializers.Serializer):
     title = serializers.CharField()
     description = serializers.CharField()
-    directors = serializers.ListField(child=serializers)
+    directors = serializers.ListField(child=serializers.CharField())
     duration = serializers.IntegerField()

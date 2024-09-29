@@ -8,6 +8,18 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = 'id text'.split()
 
 
+class ReviewDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Review
+        fields = '__all__'
+
+
+class ReviewValidateSerializer(serializers.Serializer):
+    text = serializers.CharField()
+    movie_id = serializers.IntegerField()
+    stars = serializers.IntegerField(default=0)
+
+
 class DirectorSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Director
@@ -20,7 +32,17 @@ class DirectorDetailSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class DirectorValidateSerializer(serializers.Serializer):
+    name = serializers.CharField()
+
+
 class MovieSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Movie
+        fields = '__all__'
+
+
+class MovieDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Movie
         fields = '__all__'
@@ -42,14 +64,8 @@ class MovieReviewSerializer(serializers.ModelSerializer):
         return film_rating
 
 
-
-class MovieDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Movie
-        fields = '__all__'
-
-
-class ReviewDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Review
-        fields = '__all__'
+class MovieValidateSerializer(serializers.Serializer):
+    title = serializers.CharField()
+    description = serializers.CharField()
+    directors = serializers.ListField(child=serializers)
+    duration = serializers.IntegerField()

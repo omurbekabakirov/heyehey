@@ -2,8 +2,11 @@ from . import serializers
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from movie_app import models
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
+
+from .models import Director, Movie, Review
 
 
 @api_view(['GET', 'POST'])
@@ -26,6 +29,11 @@ def director_list_api_view(request):
         director.save()
         data = serializers.DirectorSerializer(director).data
         return Response(data=data, status=status.HTTP_201_CREATED)
+
+
+class DirectorListAPIView(ListAPIView):
+    serializer_class = serializers.DirectorSerializer
+    queryset = Director.objects.all()
 
 
 @permission_classes([IsAuthenticated])
@@ -52,6 +60,12 @@ def director_detail_api_view(request, director_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class DirectorDetailAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = serializers.DirectorDetailSerializer
+    queryset = Director.objects.all()
+    lookup_field = 'id'
+
+
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def movie_list_api_view(request):
@@ -74,6 +88,11 @@ def movie_list_api_view(request):
                         data=serializers.MovieSerializer(movie).data)
 
 
+class MovieListAPIView(ListAPIView):
+    serializer_class = serializers.MovieSerializer
+    queryset = Movie.objects.all()
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def movie_review_list_api_view(request):
@@ -83,6 +102,11 @@ def movie_review_list_api_view(request):
         return Response(status=status.HTTP_404_NOT_FOUND)
     data = serializers.MovieSerializer(movies, many=True).data
     return Response(data, status=status.HTTP_200_OK)
+
+
+class MovieReviewListAPIView(ListAPIView):
+    serializer_class = serializers.MovieSerializer
+    queryset = Movie.objects.all()
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -111,6 +135,13 @@ def movie_detail_api_view(request, movie_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class MovieDetailAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = serializers.MovieDetailSerializer
+    queryset = Movie.objects.all()
+    lookup_field = 'id'
+
+
+
 @api_view(['GET ', 'POST'])
 @permission_classes([IsAuthenticated])
 def review_list_api_view(request):
@@ -130,6 +161,11 @@ def review_list_api_view(request):
         review.save()
         return Response(status=status.HTTP_201_CREATED,
                         data=serializers.ReviewSerializer(review).data)
+
+
+class ReviewListAPIView(ListAPIView):
+    serializer_class = serializers.ReviewSerializer
+    queryset = Review.objects.all()
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -157,3 +193,8 @@ def review_detail_api_view(request, review_id):
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class ReviewDetailAPIView(ReviewListAPIView):
+    serializer_class = serializers.ReviewDetailSerializer
+    queryset = Review.objects.all()
+    lookup_field = 'id'
